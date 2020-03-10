@@ -9,12 +9,21 @@
 	
 	<!--공통 기능을 제공할 클래스를 빈으로 등록  -->
 	<bean id="profiler" class="net.madvirus.spring4.chap06.aop.Profiler"/>
+	<bean id="memberUpdateTraceAdvice" class="net.madvirus.spring4.chap06.aop.UpdateMemberInfoTraceAdvice"/>
+	
+	
 	<!--Aspect 설정:Advice를 어떤 Pointcut에 적용할 지 설정  -->
 	<aop:config>
 		<aop:aspect id="traceAspect" ref="profiler">
 			<aop:pointcut expression="execution(public * net.madvirus.spring4.chap06..*(..))" id="publicMethod"/>
 			<aop:around pointcut-ref="publicMethod" method="trace"/>
 		</aop:aspect>
+		
+		<aop:aspect id="memberUpdateTraceAspect" ref="memberUpdateTraceAdvice">
+			<aop:after-returning pointcut="args(memberId,info)" method="traceReturn"/>
+		</aop:aspect>
+		
+		
 	</aop:config>
 	<bean id="writeArticleService" class="net.madvirus.spring4.chap06.board.WriteArticleServiceImpl">
 		<constructor-arg>
